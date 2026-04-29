@@ -42,17 +42,27 @@ jobs:
         sleep 15
         echo "✅ Tunnel is running!"
 
-    - name: Get Links
+    - name: 🔥 OUTPUT LINKS (COPY THESE) 🔥
       run: |
         UUID=$(cat /proc/sys/kernel/random/uuid)
-        echo "🔗 VMESS Link (copy this):" > /tmp/links.txt
-        echo "vmess://$(echo -n "{\"v\":\"2\",\"ps\":\"GH-Tunnel\",\"add\":\"localhost\",\"port\":\"8080\",\"id\":\"$UUID\",\"aid\":\"0\",\"net\":\"tcp\"}" | base64)" >> /tmp/links.txt
+        TUNNEL_URL=$(curl -s http://localhost:8081/quicktunnel | grep -o 'https://[a-z-]*\.trycloudflare\.com' | head -1)
+        
+        echo "============================================="
+        echo "🔥🔥🔥 کانفیگ های تو - اینارو کپی کن 🔥🔥🔥"
+        echo "============================================="
+        echo ""
+        echo "📌 آدرس تونل:"
+        echo "$TUNNEL_URL"
+        echo ""
+        echo "📌 لینک VMESS (کپی کن و بریز تو V2RayNG):"
+        echo "vmess://$(echo -n "{\"v\":\"2\",\"ps\":\"GH-Tunnel\",\"add\":\"${TUNNEL_URL#https://}\",\"port\":\"80\",\"id\":\"$UUID\",\"aid\":\"0\",\"net\":\"tcp\"}" | base64 -w 0)"
+        echo ""
+        echo "📌 لینک VLESS (کپی کن):"
+        echo "vless://$UUID@${TUNNEL_URL#https://}:80?encryption=none&security=none&type=tcp#GitHub-Tunnel"
+        echo ""
+        echo "============================================="
+        echo "✅ این لینک‌ها رو کپی کن و توی V2RayNG/nekobox وارد کن"
+        echo "============================================="
 
-    - name: Upload
-      uses: actions/upload-artifact@v4
-      with:
-        name: links
-        path: /tmp/links.txt
-
-    - name: Keep
+    - name: Keep Alive
       run: sleep 6h
